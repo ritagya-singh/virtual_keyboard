@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DrishtiKey | Settings</title>
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.07);
+            --accent: #00f2fe;
+            --border: rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background: radial-gradient(circle at bottom left, #0f172a, #020617);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;
+        }
+
+        .settings-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 50px;
+            width: 800px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        h1 { grid-column: span 2; margin: 0 0 20px 0; font-size: 2.5rem; text-align: center; }
+
+        /* Setting Block */
+        .setting-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            border-radius: 25px;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+            text-align: center;
+        }
+
+        .setting-item:hover {
+            border-color: var(--accent);
+            background: rgba(0, 242, 254, 0.05);
+        }
+
+        .label { display: block; font-weight: bold; color: var(--accent); margin-bottom: 15px; letter-spacing: 1px; }
+        
+        /* Interactive Elements */
+        .value-display { font-size: 2rem; font-weight: 800; margin: 10px 0; }
+        
+        .control-btn {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin: 5px;
+        }
+
+        .control-btn:hover { background: var(--accent); color: #020617; }
+
+        /* Progress Bar for Dwell */
+        .dwell-loader {
+            height: 6px; width: 0%; background: var(--accent);
+            position: absolute; bottom: 0; left: 0;
+            transition: width 1.5s linear;
+        }
+        .setting-item:hover .dwell-loader { width: 100%; }
+
+        #cursor {
+            position: fixed; width: 25px; height: 25px;
+            border: 2px solid var(--accent); border-radius: 50%;
+            pointer-events: none; z-index: 10001;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<div class="settings-card">
+    <h1>System Settings</h1>
+
+    <div class="setting-item" id="dwellSetting">
+        <span class="label">DWELL SPEED (SEC)</span>
+        <div class="value-display" id="dwellVal">1.5</div>
+        <button class="control-btn" onclick="adjust('dwell', -0.1)">-</button>
+        <button class="control-btn" onclick="adjust('dwell', 0.1)">+</button>
+    </div>
+
+    <div class="setting-item">
+        <span class="label">ACTIVE USER PROFILE</span>
+        <div class="value-display" style="font-size: 1.2rem; margin: 24px 0;">DK_USER_092</div>
+        <button class="control-btn">SWITCH PROFILE</button>
+    </div>
+
+    <div class="setting-item" id="ttsSetting">
+        <span class="label">TEXT TO SPEECH</span>
+        <div class="value-display" id="ttsStatus">ON</div>
+        <button class="control-btn" onclick="toggleTTS()">TOGGLE</button>
+    </div>
+
+    <div class="setting-item" style="display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="window.history.back()">
+        <span class="label" style="margin:0; font-size: 1.5rem;">← EXIT SETTINGS</span>
+    </div>
+</div>
+
+<script>
+    const cursor = document.getElementById('cursor');
+    let dwell = 1.5;
+    let tts = true;
+
+    // Custom Gaze Following
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+    });
+
+    function adjust(type, amt) {
+        if(type === 'dwell') {
+            dwell = Math.max(0.5, Math.min(3.0, dwell + amt)).toFixed(1);
+            document.getElementById('dwellVal').innerText = dwell;
+        }
+    }
+
+    function toggleTTS() {
+        tts = !tts;
+        document.getElementById('ttsStatus').innerText = tts ? "ON" : "OFF";
+        document.getElementById('ttsStatus').style.color = tts ? "#00f2fe" : "#ff4b2b";
+    }
+</script>
+
+</body>
+</html>

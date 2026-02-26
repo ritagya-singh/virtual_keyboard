@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DrishtiKey | Keyboard</title>
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.05);
+            --accent: #00f2fe;
+            --border: rgba(255, 255, 255, 0.1);
+            --dwell-time: 1.5s; /* Sync this with your Python settings */
+        }
+
+        body {
+            margin: 0; background: #020617; color: white;
+            font-family: 'Inter', sans-serif; overflow: hidden;
+            display: flex; flex-direction: column; height: 100vh;
+        }
+
+        /* Large Text Display Area */
+        .display-area {
+            height: 25vh; display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.3); border-bottom: 2px solid var(--border);
+            font-size: 5rem; letter-spacing: 10px; font-weight: 800; color: var(--accent);
+        }
+
+        /* The Keyboard Grid */
+        .keyboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 15px; padding: 20px; flex-grow: 1;
+        }
+
+        .key {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3.5rem; font-weight: bold;
+            position: relative; overflow: hidden;
+            cursor: pointer; transition: 0.2s;
+        }
+
+        /* Visual Feedback on Gaze */
+        .key:hover {
+            border-color: var(--accent);
+            background: rgba(0, 242, 254, 0.05);
+            transform: scale(0.98);
+        }
+
+        /* The Dwell Loader (The Fill Effect) */
+        .dwell-fill {
+            position: absolute; bottom: 0; left: 0;
+            width: 100%; height: 0%;
+            background: rgba(0, 242, 254, 0.2);
+            transition: height var(--dwell-time) linear;
+            z-index: -1;
+        }
+        .key:hover .dwell-fill { height: 100%; }
+
+        /* Special Keys */
+        .key.tts { background: rgba(0, 242, 254, 0.15); color: var(--accent); }
+        .key.back { color: #ff4b2b; }
+        .key.space { font-size: 1.5rem; letter-spacing: 5px; }
+
+        #cursor {
+            position: fixed; width: 30px; height: 30px;
+            border: 3px solid var(--accent); border-radius: 50%;
+            pointer-events: none; z-index: 10001;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 20px var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div class="display-area" id="output">_</div>
+
+<div class="keyboard-grid">
+    <div class="key" onclick="type('1')">1<div class="dwell-fill"></div></div>
+    <div class="key" onclick="type('2')">2<div class="dwell-fill"></div></div>
+    <div class="key" onclick="type('3')">3<div class="dwell-fill"></div></div>
+    <div class="key back" onclick="backspace()">⌫<div class="dwell-fill"></div></div>
+
+    <div class="key" onclick="type('4')">4<div class="dwell-fill"></div></div>
+    <div class="key" onclick="type('5')">5<div class="dwell-fill"></div></div>
+    <div class="key" onclick="type('6')">6<div class="dwell-fill"></div></div>
+    <div class="key space" onclick="type(' ')">SPACE<div class="dwell-fill"></div></div>
+
+    <div class="key" onclick="type('7')">7<div class="dwell-fill"></div></div>
+    <div class="key" onclick="type('8')">8<div class="dwell-fill"></div></div>
+    <div class="key" onclick="type('9')">9<div class="dwell-fill"></div></div>
+    <div class="key" onclick="type('0')">0<div class="dwell-fill"></div></div>
+
+    <div class="key tts" style="grid-column: span 4;" onclick="speak()">
+        🔊 SPEAK TEXT
+        <div class="dwell-fill"></div>
+    </div>
+</div>
+
+<script>
+    const outputDiv = document.getElementById('output');
+    const cursor = document.getElementById('cursor');
+    let text = "";
+    let dwellTimer;
+
+    // Custom Gaze (Mouse Proxy)
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+    });
+
+    function type(char) {
+        text += char;
+        outputDiv.innerText = text + "_";
+    }
+
+    function backspace() {
+        text = text.slice(0, -1);
+        outputDiv.innerText = text + "_";
+    }
+
+    function speak() {
+        if(text.length > 0) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9; // Slightly slower for clarity
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    // Dwell Detection for Gaze
+    document.querySelectorAll('.key').forEach(key => {
+        key.addEventListener('mouseenter', () => {
+            dwellTimer = setTimeout(() => {
+                key.click();
+                // Brief visual flash to confirm "click"
+                key.style.background = "var(--accent)";
+                setTimeout(() => key.style.background = "", 100);
+            }, 1500); // 1.5 second dwell
+        });
+        key.addEventListener('mouseleave', () => {
+            clearTimeout(dwellTimer);
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DrishtiKey | Caretaker Login</title>
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.15);
+            --accent: #00f2fe;
+            --dwell-speed: 1.5s;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top right, #1e293b, #020617);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .login-card {
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 60px 40px;
+            width: 450px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        h1 { font-size: 2.8rem; margin: 0; letter-spacing: -1px; }
+        
+        .subheading {
+            color: var(--accent);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 10px 0 40px 0;
+            font-weight: 700;
+        }
+
+        /* Input Styling */
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            margin-left: 15px;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .input-field {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 18px;
+            color: white;
+            font-size: 1.1rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: var(--accent);
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Gaze Login Button */
+        .login-btn {
+            width: 100%;
+            background: var(--accent);
+            color: #020617;
+            border: none;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+
+        .login-btn:hover {
+            transform: scale(1.02);
+        }
+
+        /* Progress loader for Gaze selection */
+        .dwell-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            height: 100%;
+            width: 0%;
+            background: rgba(255,255,255,0.2);
+            transition: width var(--dwell-speed) linear;
+        }
+
+        .login-btn:hover .dwell-overlay {
+            width: 100%;
+        }
+
+        #cursor {
+            position: fixed; width: 25px; height: 25px;
+            border: 2px solid var(--accent); border-radius: 50%;
+            pointer-events: none; z-index: 10001;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<div class="login-card">
+    <h1>DrishtiKey</h1>
+    <div class="subheading">Should be done by caretakers</div>
+
+    <div class="input-group">
+        <label>USERNAME OR EMAIL</label>
+        <input type="text" class="input-field" placeholder="Enter ID..." id="userField">
+    </div>
+
+    <div class="input-group">
+        <label>PASSWORD</label>
+        <input type="password" class="input-field" placeholder="••••••••" id="passField">
+    </div>
+
+    <button class="login-btn" id="loginBtn">
+        <div class="dwell-overlay"></div>
+        LOGIN
+    </button>
+</div>
+
+<script>
+    const cursor = document.getElementById('cursor');
+    const loginBtn = document.getElementById('loginBtn');
+    let dwellTimer;
+
+    // Simulate Gaze
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+    });
+
+    // Dwell Logic for Login Button
+    loginBtn.addEventListener('mouseenter', () => {
+        dwellTimer = setTimeout(() => {
+            const user = document.getElementById('userField').value;
+            if(user) {
+                alert("Authenticating " + user + "...");
+            } else {
+                alert("Please enter credentials.");
+            }
+        }, 1500); // 1.5s dwell
+    });
+
+    loginBtn.addEventListener('mouseleave', () => {
+        clearTimeout(dwellTimer);
+    });
+</script>
+
+</body>
+</html>

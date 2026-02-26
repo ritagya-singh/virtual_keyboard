@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DrishtiKey | Premium Effects</title>
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent: #00f2fe;
+            --accent-glow: rgba(0, 242, 254, 0.6);
+            --dwell-speed: 1.5s;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: #020617;
+            color: white;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 1. Animated Ambient Background */
+        .ambient-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1e293b 0%, #020617 100%);
+            z-index: -2;
+        }
+
+        .blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: var(--accent);
+            filter: blur(150px);
+            border-radius: 50%;
+            opacity: 0.15;
+            z-index: -1;
+            animation: move 20s infinite alternate;
+        }
+
+        @keyframes move {
+            from { transform: translate(-20%, -20%); }
+            to { transform: translate(20%, 20%); }
+        }
+
+        .container {
+            text-align: center;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 60px;
+            background: linear-gradient(to right, #fff, var(--accent), #fff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 4s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        /* 2. Enhanced Glass Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 320px);
+            gap: 50px;
+        }
+
+        .gaze-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 35px;
+            padding: 60px 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+        }
+
+        /* Hover Glow Effect */
+        .gaze-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
+                        0 0 20px var(--accent-glow);
+        }
+
+        /* 3. The Progress "Dwell" Loader */
+        .progress-bar {
+            position: absolute; 
+            bottom: 0; left: 0;
+            height: 10px; width: 0%;
+            background: linear-gradient(90deg, transparent, var(--accent));
+            box-shadow: 0 0 15px var(--accent);
+            transition: width var(--dwell-speed) linear;
+        }
+        
+        .gaze-card:hover .progress-bar { width: 100%; }
+
+        /* 4. Custom Gaze Cursor with Trail */
+        #cursor {
+            position: fixed; width: 30px; height: 30px;
+            border: 2px solid var(--accent); border-radius: 50%;
+            pointer-events: none; z-index: 10001;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px var(--accent);
+            transition: transform 0.1s ease-out;
+        }
+
+        .icon { 
+            font-size: 4.5rem; 
+            margin-bottom: 20px; 
+            display: block; 
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+            transition: transform 0.3s ease;
+        }
+
+        .gaze-card:hover .icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        h3 { font-size: 1.6rem; letter-spacing: 1px; }
+
+    </style>
+</head>
+<body>
+
+<div class="ambient-bg"></div>
+<div class="blob"></div>
+<div id="cursor"></div>
+
+<div class="container">
+    <h1>DrishtiKey</h1>
+    
+    <div class="grid">
+        <div class="gaze-card" onclick="triggerAction('Login')">
+            <span class="icon">👤</span>
+            <h3>LOGIN</h3>
+            <div class="progress-bar"></div>
+        </div>
+
+        <div class="gaze-card" onclick="triggerAction('Settings')">
+            <span class="icon">⚙️</span>
+            <h3>SETTINGS</h3>
+            <div class="progress-bar"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const cursor = document.getElementById('cursor');
+    let dwellTimer;
+
+    // Smooth Cursor Following
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+    });
+
+    function triggerAction(name) {
+        // Add a small scale-down effect on "click"
+        document.body.style.opacity = "0.5";
+        setTimeout(() => {
+            alert(name + " System Activated");
+            document.body.style.opacity = "1";
+        }, 300);
+    }
+
+    // Dwell Logic
+    document.querySelectorAll('.gaze-card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            dwellTimer = setTimeout(() => {
+                card.click();
+            }, 1500); 
+        });
+        card.addEventListener('mouseleave', () => {
+            clearTimeout(dwellTimer);
+        });
+    });
+</script>
+
+</body>
+</html>
